@@ -3,7 +3,7 @@ async function analisarAnuncio() {
     const entrada = document.getElementById("itemId").value.trim();
     const resultado = document.getElementById("resultado");
 
-    resultado.innerHTML = "Analisando...";
+    resultado.innerHTML =
 
     try {
 
