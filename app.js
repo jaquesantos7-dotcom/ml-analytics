@@ -1,46 +1,60 @@
 async function analisarAnuncio() {
 
-```
-const entrada = document.getElementById("itemId").value;
-const resultado = document.getElementById("resultado");
+    const entrada = document.getElementById("itemId").value.trim();
+    const resultado = document.getElementById("resultado");
 
-resultado.innerHTML = "Analisando...";
+    resultado.innerHTML = "Analisando...";
 
-let itemId = entrada;
+    try {
 
-const match = entrada.match(/ML[A-Z0-9]+/);
+        let itemId = entrada;
 
-if (match) {
-    itemId = match[0];
-}
+        // Se colar URL
+        if (entrada.includes("mercadolivre")) {
 
-try {
+            const respostaBusca = await fetch(
+                `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(entrada)}`
+            );
 
-    const response = await fetch(
-        `https://api.mercadolibre.com/items/${itemId}`
-    );
+            const busca = await respostaBusca.json();
 
-    const data = await response.json();
+            if (!busca.results || busca.results.length === 0) {
+                throw new Error("Anúncio não encontrado");
+            }
 
-    resultado.innerHTML = `
-        <h2>${data.title}</h2>
+            itemId = busca.results[0].id;
+        }
 
-        <p><strong>Preço:</strong> R$ ${data.price}</p>
+        const response = await fetch(
+            `https://api.mercadolibre.com/items/${itemId}`
+        );
 
-        <p><strong>Categoria:</strong> ${data.category_id}</p>
+        const data = await response.json();
 
-        <p><strong>Vendidos:</strong> ${data.sold_quantity}</p>
+        resultado.innerHTML = `
+            <h2>${data.title}</h2>
 
-        <img src="${data.thumbnail}" width="250">
-    `;
+            <img src="${data.thumbnail}"
+                 width="250">
 
-} catch (erro) {
+            <p><strong>Preço:</strong>
+            R$ ${data.price}</p>
 
-    resultado.innerHTML =
-    "Erro ao consultar anúncio.";
+            <p><strong>Categoria:</strong>
+            ${data.category_id}</p>
 
-    console.log(erro);
-}
-```
+            <p><strong>Vendidos:</strong>
+            ${data.sold_quantity}</p>
 
+            <p><strong>Status:</strong>
+            ${data.status}</p>
+        `;
+
+    } catch (erro) {
+
+        resultado.innerHTML =
+        "Erro ao consultar anúncio.";
+
+        console.error(erro);
+    }
 }
