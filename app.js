@@ -1,49 +1,49 @@
-async function analisarAnuncio(){
+async function analisarAnuncio() {
 
-const itemId =
-document.getElementById("itemId").value;
+    const entrada = document.getElementById("itemId").value;
+    const resultado = document.getElementById("resultado");
 
-const resultado =
-document.getElementById("resultado");
+    resultado.innerHTML = "Analisando...";
 
-resultado.innerHTML =
-"Analisando...";
+    let itemId = entrada;
 
-try{
+    // Extrair ID caso seja URL
+    const match = entrada.match(/ML[A-Z0-9]+/);
 
-const response =
-await fetch(
-`https://api.mercadolibre.com/items/${itemId}`
-);
+    if (match) {
+        itemId = match[0];
+    }
 
-const data =
-await response.json();
+    try {
 
-resultado.innerHTML = `
+        const response = await fetch(
+            `https://api.mercadolibre.com/items/${itemId}`
+        );
 
-<h2>${data.title}</h2>
+        const data = await response.json();
 
-<p>
-Preço:
-R$ ${data.price}
-</p>
+        resultado.innerHTML = `
+            <h2>${data.title}</h2>
 
-<p>
-Categoria:
-${data.category_id}
-</p>
+            <p><strong>Preço:</strong>
+            R$ ${data.price}</p>
 
-<p>
-Quantidade vendida:
-${data.sold_quantity}
-</p>
-`;
+            <p><strong>Categoria:</strong>
+            ${data.category_id}</p>
 
-}catch(error){
+            <p><strong>Vendidos:</strong>
+            ${data.sold_quantity}</p>
 
-resultado.innerHTML =
-"Erro ao analisar anúncio.";
+            <img
+            src="${data.thumbnail}"
+            width="250">
+        `;
 
-}
+    } catch (erro) {
 
+        resultado.innerHTML =
+        "Erro ao consultar anúncio.";
+
+        console.log(erro);
+    }
 }
