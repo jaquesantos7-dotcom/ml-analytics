@@ -1,15 +1,11 @@
 export default function handler(req, res) {
 
-    const clientId = process.env.ML_CLIENT_ID;
+const url =
+    "https://auth.mercadolivre.com.br/authorization" +
+    "?response_type=code" +
+    "&client_id=4849212245586572" +
+    "&redirect_uri=https://ml-analytics-amber.vercel.app/api/callback";
 
-    const redirectUri =
-        "https://ml-analytics-amber.vercel.app/api/callback";
+res.redirect(url);
 
-    const url =
-        `https://auth.mercadolivre.com.br/authorization` +
-        `?response_type=code` +
-        `&client_id=${clientId}` +
-        `&redirect_uri=${redirectUri}`;
-
-    res.redirect(url);
 }
